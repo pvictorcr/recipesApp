@@ -64,4 +64,11 @@ public class Ingredient {
 	public void setUnitOfMesure(UnitOfMeasure unitOfMesure) {
 		this.unitOfMesure = unitOfMesure;
 	}
+	
+	public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMesure, Recipe recipe) {
+        this.description = description;
+        this.amount = amount;
+        this.unitOfMesure = unitOfMesure;
+        this.recipe = recipe;
+    }
 }
