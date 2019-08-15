@@ -19,7 +19,6 @@ public class IndexController {
 	public String getIndexPage(Model model) {
 
 		model.addAttribute("recipes", this.recipeService.findAll());
-		System.out.println(">>>>>>>>>"+ this.recipeService.findAll().size());
 		return "index";
 	}
 }
