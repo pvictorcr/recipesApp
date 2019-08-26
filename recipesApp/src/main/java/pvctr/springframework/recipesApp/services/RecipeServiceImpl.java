@@ -5,8 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
+import pvctr.springframework.recipesApp.commands.RecipeCommand;
+import pvctr.springframework.recipesApp.converters.RecipeCommandToRecipe;
+import pvctr.springframework.recipesApp.converters.RecipeToRecipeCommand;
 import pvctr.springframework.recipesApp.domain.Recipe;
 import pvctr.springframework.recipesApp.repositories.RecipeRepository;
 
@@ -14,32 +18,51 @@ import pvctr.springframework.recipesApp.repositories.RecipeRepository;
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-	private final RecipeRepository recipeRepository;
-	
-	public RecipeServiceImpl(RecipeRepository recipeRepository) {
-		this.recipeRepository = recipeRepository;
-	}
+    private final RecipeRepository recipeRepository;
+    private final RecipeCommandToRecipe recipeCommandToRecipe;
+    private final RecipeToRecipeCommand recipeToRecipeCommand;
+
+    public RecipeServiceImpl(RecipeRepository recipeRepository, RecipeCommandToRecipe recipeCommandToRecipe, RecipeToRecipeCommand recipeToRecipeCommand) {
+        this.recipeRepository = recipeRepository;
+        this.recipeCommandToRecipe = recipeCommandToRecipe;
+        this.recipeToRecipeCommand = recipeToRecipeCommand;
+    }
+
+    @Override
+    public Set<Recipe> getRecipes() {
+        log.debug("I'm in the service");
+
+        Set<Recipe> recipeSet = new HashSet<>();
+        recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add);
+        return recipeSet;
+    }
+
+    @Override
+    public Recipe findById(Long l) {
+
+        Optional<Recipe> recipeOptional = recipeRepository.findById(l);
+
+        if (!recipeOptional.isPresent()) {
+            throw new RuntimeException("Recipe Not Found!");
+        }
+
+        return recipeOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public RecipeCommand saveRecipeCommand(RecipeCommand command) {
+        Recipe detachedRecipe = recipeCommandToRecipe.convert(command);
+
+        Recipe savedRecipe = recipeRepository.save(detachedRecipe);
+        log.debug("Saved RecipeId:" + savedRecipe.getId());
+        return recipeToRecipeCommand.convert(savedRecipe);
+    }
 
 	@Override
 	public Set<Recipe> findAll() {
-
-		log.debug("I'm in a service");
-		
-		Set<Recipe> recipeSet = new HashSet<>();
-		recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add);
-		return recipeSet;
-	}
-
-	@Override
-	public Recipe findById(Long id) {
-
-		Optional<Recipe> recipeOptional = recipeRepository.findById(id);
-		
-		if(!recipeOptional.isPresent()) {
-			throw new RuntimeException("Recipe Not Found!");
-		}
-		
-		return recipeOptional.get();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -59,11 +82,4 @@ public class RecipeServiceImpl implements RecipeService {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public Set<Recipe> getRecipes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
