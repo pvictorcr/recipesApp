@@ -14,4 +14,6 @@ public interface RecipeService extends CrudService<Recipe, Long> {
     RecipeCommand findCommandById(Long l);
 
     RecipeCommand saveRecipeCommand(RecipeCommand command);
+    
+    void deleteById(Long id);
 }
