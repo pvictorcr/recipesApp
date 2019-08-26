@@ -22,7 +22,7 @@ public class IndexController {
 
 		log.debug("Getting Index Page");
 		
-		model.addAttribute("recipes", this.recipeService.findAll());
+		model.addAttribute("recipes", this.recipeService.getRecipes());
 		return "index";
 	}
 }

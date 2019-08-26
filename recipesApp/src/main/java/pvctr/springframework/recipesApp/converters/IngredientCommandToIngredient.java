@@ -4,6 +4,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import lombok.Synchronized;
 import pvctr.springframework.recipesApp.commands.IngredientCommand;
 import pvctr.springframework.recipesApp.domain.Ingredient;
 
@@ -16,6 +17,7 @@ public class IngredientCommandToIngredient implements Converter<IngredientComman
         this.uomConverter = uomConverter;
     }
 
+    @Synchronized
     @Nullable
     @Override
     public Ingredient convert(IngredientCommand source) {

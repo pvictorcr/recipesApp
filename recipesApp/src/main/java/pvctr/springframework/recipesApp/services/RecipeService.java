@@ -10,6 +10,8 @@ public interface RecipeService extends CrudService<Recipe, Long> {
 	Set<Recipe> getRecipes();
 
     Recipe findById(Long l);
+    
+    RecipeCommand findCommandById(Long l);
 
     RecipeCommand saveRecipeCommand(RecipeCommand command);
 }

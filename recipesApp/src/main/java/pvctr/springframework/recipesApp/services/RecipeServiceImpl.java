@@ -82,4 +82,11 @@ public class RecipeServiceImpl implements RecipeService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	@Transactional
+	public RecipeCommand findCommandById(Long l) {
+
+		return recipeToRecipeCommand.convert(findById(l));
+	}
 }
