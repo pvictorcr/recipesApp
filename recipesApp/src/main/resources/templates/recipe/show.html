@@ -85,7 +85,14 @@
                 </div>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h1 class="panel-title" >Ingredients</h1>
+                        <div class="row">
+                            <div class="col-md-11 ">
+                                <h1 class="panel-title">Ingredients</h1>
+                            </div>
+                            <div class="col-md-1">
+                                <a class="btn btn-default" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -95,7 +102,7 @@
                                     <li th:remove="all">1 Teaspoon of chocolate</li>
                                     <li th:each="ingridient : ${recipe.ingredients}"
                                     th:text="${ingridient.getAmount()} + ' ' +
-                                    ${ingridient.unitOfMesure.getDescription()} + ' ' +
+                                    ${ingridient.unitOfMeasure.getDescription()} + ' ' +
                                     ${ingridient.getDescription()}">1 Teaspoon of Sugar</li>
                                 </ul>
                             </div>

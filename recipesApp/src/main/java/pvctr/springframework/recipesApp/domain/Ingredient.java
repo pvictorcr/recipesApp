@@ -28,20 +28,20 @@ public class Ingredient {
 	private Recipe recipe;
 	
 	@OneToOne(fetch = FetchType.EAGER)
-	private UnitOfMeasure unitOfMesure;
+	private UnitOfMeasure unitOfMeasure;
 	
 	public Ingredient() {
 	}
 	
-	public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMesure) {
+	public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMeasure) {
         this.description = description;
         this.amount = amount;
-        this.unitOfMesure = unitOfMesure;
+        this.unitOfMeasure = unitOfMeasure;
     }
-	public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMesure, Recipe recipe) {
+	public Ingredient(String description, BigDecimal amount, UnitOfMeasure unitOfMeasure, Recipe recipe) {
         this.description = description;
         this.amount = amount;
-        this.unitOfMesure = unitOfMesure;
+        this.unitOfMeasure = unitOfMeasure;
         this.recipe = recipe;
     }
 }
