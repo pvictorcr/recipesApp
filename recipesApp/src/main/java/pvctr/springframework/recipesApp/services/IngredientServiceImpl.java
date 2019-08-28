@@ -2,10 +2,13 @@ package pvctr.springframework.recipesApp.services;
 
 import lombok.extern.slf4j.Slf4j;
 import pvctr.springframework.recipesApp.commands.IngredientCommand;
+import pvctr.springframework.recipesApp.commands.RecipeCommand;
 import pvctr.springframework.recipesApp.converters.IngredientCommandToIngredient;
 import pvctr.springframework.recipesApp.converters.IngredientToIngredientCommand;
+import pvctr.springframework.recipesApp.converters.RecipeToRecipeCommand;
 import pvctr.springframework.recipesApp.domain.Ingredient;
 import pvctr.springframework.recipesApp.domain.Recipe;
+import pvctr.springframework.recipesApp.repositories.IngredientRepository;
 import pvctr.springframework.recipesApp.repositories.RecipeRepository;
 import pvctr.springframework.recipesApp.repositories.UnitOfMeasureRepository;
 
@@ -26,14 +29,19 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientCommandToIngredient ingredientCommandToIngredient;
     private final RecipeRepository recipeRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final IngredientRepository ingredientRepository;
+    private final RecipeToRecipeCommand recipeToRecipeCommand;
 
     public IngredientServiceImpl(IngredientToIngredientCommand ingredientToIngredientCommand,
     		IngredientCommandToIngredient ingredientCommandToIngredient, RecipeRepository recipeRepository,
-    		UnitOfMeasureRepository unitOfMeasureRepository) {
+    		UnitOfMeasureRepository unitOfMeasureRepository, IngredientRepository ingredientRepository,
+    		RecipeToRecipeCommand recipeToRecipeCommand) {
         this.ingredientToIngredientCommand = ingredientToIngredientCommand;
         this.ingredientCommandToIngredient = ingredientCommandToIngredient;
         this.recipeRepository = recipeRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.recipeToRecipeCommand = recipeToRecipeCommand;
     }
 
     @Override
@@ -111,6 +119,40 @@ public class IngredientServiceImpl implements IngredientService {
             //to do check for fail
             return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
         }
+    }
+    
+    @Override
+    @Transactional
+    public RecipeCommand deleteIngredientCommand(IngredientCommand command) {
+        
+    	Optional<Recipe> recipeOptional = recipeRepository.findById(command.getRecipeId());
+
+        if(!recipeOptional.isPresent()){
+
+            //TODO launch error if not found!
+            log.error("Recipe not found for id: " + command.getRecipeId());
+        } else {
+            Recipe recipe = recipeOptional.get();
+
+            Optional<Ingredient> ingredientOptional = recipe
+                    .getIngredients()
+                    .stream()
+                    .filter(ingredient -> ingredient.getId().equals(command.getId()))
+                    .findFirst();
+
+            if(ingredientOptional.isPresent()){
+            	
+                Ingredient ingredientFound = ingredientOptional.get();
+                ingredientRepository.delete(ingredientFound);
+                recipeOptional.get().getIngredients().remove(ingredientFound);
+
+            } else {
+                //add new Ingredient
+            	log.error("Ingredient not found for id: " + command.getId() + ", recipeId: " + command.getRecipeId());
+            }
+        }
+        
+        return recipeToRecipeCommand.convert(recipeOptional.get());
     }
 
 	@Override
