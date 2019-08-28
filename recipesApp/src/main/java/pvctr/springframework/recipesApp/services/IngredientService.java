@@ -11,4 +11,6 @@ public interface IngredientService extends CrudService<Ingredient, Long> {
 	IngredientCommand saveIngredientCommand(IngredientCommand command);
 
 	RecipeCommand deleteIngredientCommand(IngredientCommand command);
+
+	void deleteById(Long recipeId, Long id);
 }
