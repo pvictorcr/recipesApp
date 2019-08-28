@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.slf4j.Slf4j;
 import pvctr.springframework.recipesApp.commands.IngredientCommand;
+import pvctr.springframework.recipesApp.commands.RecipeCommand;
+import pvctr.springframework.recipesApp.commands.UnitOfMeasureCommand;
+import pvctr.springframework.recipesApp.domain.UnitOfMeasure;
 import pvctr.springframework.recipesApp.services.IngredientService;
 import pvctr.springframework.recipesApp.services.RecipeService;
 import pvctr.springframework.recipesApp.services.UnitOfMeasureService;
@@ -46,6 +49,26 @@ public class IngredientController {
 		model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.valueOf(recipeId), Long.valueOf(id)));
 		
 		return "recipe/ingredient/show";
+	}
+	
+	@GetMapping
+	@RequestMapping("recipe/{recipeId}/ingredient/new")
+	public String newRecipe(@PathVariable String recipeId, Model model) {
+		
+		//make sure we have a valid id value
+		RecipeCommand recipeCommand = recipeService.findCommandById(Long.valueOf(recipeId));
+		//TODO raise exception if null
+		
+		//need to return back parent id for hidden form property
+		IngredientCommand ingredientCommand = new IngredientCommand();
+		ingredientCommand.setRecipeId(Long.valueOf(recipeId));
+		model.addAttribute("ingredient", ingredientCommand);
+		
+		ingredientCommand.setUnitOfMeasure(new UnitOfMeasureCommand());
+		
+		model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+		
+		return "recipe/ingredient/ingredientform";
 	}
 	
 	@GetMapping
